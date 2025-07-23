@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Frankmark Template</title>
+
+  <!-- FrankenUI CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/franken-ui@2.1.0-next.16/dist/css/core.min.css"/>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/franken-ui@2.1.0-next.16/dist/css/utilities.min.css"/>
+
+  <!-- FrankenUI JS -->
+  <script src="https://cdn.jsdelivr.net/npm/franken-ui@2.1.0-next.16/dist/js/core.iife.js" type="module"></script>
+  <script src="https://cdn.jsdelivr.net/npm/franken-ui@2.1.0-next.16/dist/js/icon.iife.js" type="module"></script>
+
+  <!-- FrankenUI Theme -->
+  <script>
+    const htmlElement = document.documentElement;
+  
+    const __FRANKEN__ = JSON.parse(localStorage.getItem("__FRANKEN__") || "{}");
+  
+    if (
+      __FRANKEN__.mode === "dark" ||
+      (!__FRANKEN__.mode &&
+        window.matchMedia("(prefers-color-scheme: dark)").matches)
+    ) {
+      htmlElement.classList.add("dark");
+    } else {
+      htmlElement.classList.remove("dark");
+    }
+  
+    htmlElement.classList.add(__FRANKEN__.theme || "uk-theme-neutral");
+    htmlElement.classList.add(__FRANKEN__.radii || "uk-radii-md");
+    htmlElement.classList.add(__FRANKEN__.shadows || "uk-shadows-sm");
+    htmlElement.classList.add(__FRANKEN__.font || "uk-font-sm");
+    htmlElement.classList.add(__FRANKEN__.chart || "uk-chart-default");
+  </script>
+</head>
+<body class="bg-background text-foreground">
+    <!-- ... -->
+</body>
+</html>
