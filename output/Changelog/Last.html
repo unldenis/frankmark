@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Test Page</title>
+
+  <!-- FrankenUI CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/franken-ui@2.1.0-next.16/dist/css/core.min.css"/>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/franken-ui@2.1.0-next.16/dist/css/utilities.min.css"/>
+
+  <!-- FrankenUI JS -->
+  <script src="https://cdn.jsdelivr.net/npm/franken-ui@2.1.0-next.16/dist/js/core.iife.js" type="module"></script>
+  <script src="https://cdn.jsdelivr.net/npm/franken-ui@2.1.0-next.16/dist/js/icon.iife.js" type="module"></script>
+
+  <!-- FrankenUI Theme -->
+  <script>
+    const htmlElement = document.documentElement;
+  
+    const __FRANKEN__ = JSON.parse(localStorage.getItem("__FRANKEN__") || "{}");
+  
+    if (
+      __FRANKEN__.mode === "dark" ||
+      (!__FRANKEN__.mode &&
+        window.matchMedia("(prefers-color-scheme: dark)").matches)
+    ) {
+      htmlElement.classList.add("dark");
+    } else {
+      htmlElement.classList.remove("dark");
+    }
+  
+    htmlElement.classList.add(__FRANKEN__.theme || "uk-theme-neutral");
+    htmlElement.classList.add(__FRANKEN__.radii || "uk-radii-md");
+    htmlElement.classList.add(__FRANKEN__.shadows || "uk-shadows-sm");
+    htmlElement.classList.add(__FRANKEN__.font || "uk-font-sm");
+    htmlElement.classList.add(__FRANKEN__.chart || "uk-chart-default");
+  </script>
+</head>
+<body class="bg-background text-foreground">
+
+    <!-- Topbar -->
+    <div class="border-border fixed inset-x-0 top-0 z-10 border-b">
+        <div class="bg-background text-foreground">
+            <div class="flex h-14 items-center justify-between gap-8 px-4 sm:px-6">
+                
+                <div class="flex items-center gap-2">
+                    <!-- <p>Hello</p> -->
+                </div>
+                <div class="flex items-center gap-2">
+                    <div class="uk-inline">
+                        <a class="uk-form-icon uk-form-icon-flip" href="#">
+                          <uk-icon icon="search"></uk-icon>
+                        </a>
+                        <input class="uk-input" type="text" aria-label="Clickable icon" placeholder="Search" />
+                    </div>
+
+                    <div class="flex gap-2">
+                        <a class="uk-btn uk-btn-secondary uk-btn-sm sm:inline-flex" href="https://github.com/unldenis/holoeasy">
+                            <uk-icon icon="github"></uk-icon>
+                            <span>Star on Github</span>
+                        </a>
+                        <a class="uk-btn uk-btn-secondary uk-btn-sm sm:inline-flex" href="#theme-switcher-modal" data-uk-toggle>
+                            <uk-icon icon="palette"></uk-icon>
+                        </a>
+                        <div class="uk-modal" id="theme-switcher-modal" data-uk-modal>
+                            <div class="uk-modal-dialog">
+                              <button
+                                class="uk-modal-close absolute right-4 top-4"
+                                type="button"
+                                data-uk-close
+                              ></button>
+                              <div class="uk-modal-header">
+                                <div class="uk-modal-title">Customize</div>
+                              </div>
+                              <div class="uk-modal-body">
+                                <uk-theme-switcher id="theme-switcher">
+                                  <select hidden>
+                                    <optgroup data-key="theme" label="Theme">
+                                      <option data-hex="#52525b" value="uk-theme-zinc">Zinc</option>
+                          
+                                      <option data-hex="#64748b" value="uk-theme-slate">Slate</option>
+                                      <option data-hex="#78716c" value="uk-theme-stone">Stone</option>
+                                      <option data-hex="#6b7280" value="uk-theme-gray">Gray</option>
+                                      <option data-hex="#737373" value="uk-theme-neutral" selected>
+                                        Neutral
+                                      </option>
+                                      <option data-hex="#dc2626" value="uk-theme-red">Red</option>
+                                      <option data-hex="#e11d48" value="uk-theme-rose">Rose</option>
+                                      <option data-hex="#f97316" value="uk-theme-orange">Orange</option>
+                                      <option data-hex="#65a30d" value="uk-theme-green">Green</option>
+                                      <option data-hex="#2563eb" value="uk-theme-blue">Blue</option>
+                                      <option data-hex="#facc15" value="uk-theme-yellow">Yellow</option>
+                                      <option data-hex="#7c3aed" value="uk-theme-violet">Violet</option>
+                                      <option data-hex="#d97706" value="uk-theme-amber">Amber</option>
+                                      <option data-hex="#9333ea" value="uk-theme-purple">Purple</option>
+                                      <option data-hex="#0d9488" value="uk-theme-teal">Teal</option>
+                                    </optgroup>
+                                    <optgroup data-key="radii" label="Radii">
+                                      <option value="uk-radii-none">None</option>
+                                      <option value="uk-radii-sm">Small</option>
+                                      <option value="uk-radii-md" selected>Medium</option>
+                                      <option value="uk-radii-lg">Large</option>
+                                    </optgroup>
+                                    <optgroup data-key="shadows" label="Shadows">
+                                      <option value="uk-shadows-none">None</option>
+                                      <option value="uk-shadows-sm" selected>Small</option>
+                                      <option value="uk-shadows-md">Medium</option>
+                                      <option value="uk-shadows-lg">Large</option>
+                                    </optgroup>
+                                    <optgroup data-key="font" label="Font">
+                                      <option value="uk-font-sm" selected>Small</option>
+                                      <option value="uk-font-base">Default</option>
+                                    </optgroup>
+                                    <optgroup data-key="mode" label="Mode">
+                                      <option data-icon="sun" value="light">Light</option>
+                                      <option data-icon="moon" value="dark">Dark</option>
+                                    </optgroup>
+                                  </select>
+                                </uk-theme-switcher>
+                              </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                </div>
+
+            
+            </div>
+        </div>
+    </div>
+
+    <!-- Main -->
+    <div class="grid grid-cols-12 pt-14">
+        
+        <!-- Sidebar -->
+        <aside class="col-span-2">
+            
+
+            <ul class="uk-nav-default mx-auto mt-4 ml-6 mr-6" data-uk-nav="collapsible: false">
+                <div class="uk-nav-header">Documentation</div>
+                
+                <li class="uk-parent">
+                    <a href="#">Introduction <span data-uk-nav-parent-icon></span></a>
+                    <ul class="uk-nav-sub">
+                        
+                        <li class=""><a href="../Introduction/Installation.html">Installation</a></li>
+                        
+                        <li class=""><a href="../Introduction/Hello-World.html">Hello-World</a></li>
+                        
+                    </ul>   
+                </li>
+                
+                <li class="uk-parent">
+                    <a href="#">Changelog <span data-uk-nav-parent-icon></span></a>
+                    <ul class="uk-nav-sub">
+                        
+                        <li class="uk-active"><a href="../Changelog/Last.html">Last</a></li>
+                        
+                    </ul>   
+                </li>
+                
+            </ul>
+
+        </aside>
+
+
+        <!-- Empty Space -->
+        <div class="col-span-1">
+            <!-- This space is intentionally left empty -->
+        </div>
+
+        <!-- Main Content -->
+        <div class="col-span-6">
+            <div class="pt-6">
+                <div class="content">
+                  # Last
+                </div>
+
+                <!-- If has next page -->
+                              
+            </div>
+
+
+              
+        </div>
+
+        <!-- Empty Space -->
+        <div class="col-span-3">
+            <!-- This space is intentionally left empty -->
+        </div>
+
+    </div>
+</body>
+</html>

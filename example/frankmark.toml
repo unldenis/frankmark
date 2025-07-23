@@ -1,0 +1,7 @@
+[package]
+github_url = "https://github.com/unldenis/holoeasy"
+
+[directories]
+
+Introduction = ["Installation", "Usage", "Hello-World"]
+Changelog = ["Last"]
