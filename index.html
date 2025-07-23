@@ -44,7 +44,7 @@
             <div class="flex h-14 items-center justify-between gap-8 px-4 sm:px-6">
                 
                 <div class="flex items-center gap-2">
-                    <p>Hello</p>
+                    <!-- <p>Hello</p> -->
                 </div>
                 <div class="flex items-center gap-2">
                     <div class="uk-inline">
@@ -130,5 +130,81 @@
     </div>
 
     <!-- Main -->
+    <div class="grid grid-cols-12 pt-14">
+        
+        <!-- Sidebar -->
+        <aside class="col-span-2">
+            
+
+            <ul class="uk-nav-default mx-auto mt-4 ml-6 mr-6" data-uk-nav="collapsible: false">
+                <div class="uk-nav-header">Documentation</div>
+                <li class="uk-parent">
+                    <a href="#">Getting Started <span data-uk-nav-parent-icon></span></a>
+                    <ul class="uk-nav-sub">
+                        <li class="uk-active"><a href="#">Introduction</a></li>
+                        <li><a href="#">Installation</a></li>
+                    </ul>
+                </li>
+                <li class="uk-parent">
+                    <a href="#">Parent <span data-uk-nav-parent-icon></span></a>
+                    <ul class="uk-nav-sub">
+                        <li><a href="#">Sub item</a></li>
+                        <li><a href="#">Sub item</a></li>
+                    </ul>
+                </li>
+            </ul>
+
+        </aside>
+
+
+        <!-- Empty Space -->
+        <div class="col-span-1">
+            <!-- This space is intentionally left empty -->
+        </div>
+
+        <!-- Main Content -->
+        <div class="col-span-6">
+            <div class="pt-6">
+                <h1 class="uk-heading-medium">Welcome to Frankmark</h1>
+                <p class="uk-text-lead">This is your main content area.</p>
+                <p class="uk-paragraph">
+                    Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quos. Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quos.
+                </p>
+                <p class="uk-paragraph">
+                    Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quos. Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quos.
+                </p>
+                
+
+                <div class="mt-6">
+                    <div class="uk-card max-w-lg ml-auto" href="#">
+                        <div class="uk-card-body flex justify-between">
+                            <div class="">
+                                <p class="mt-2 text-muted-foreground">
+                                    Next
+                                </p>
+                                <p>
+                                    Installation
+                                </p>
+                            </div>
+
+                            <a class="uk-btn uk-btn-default uk-btn-icon" href="#">
+                                <uk-icon icon="arrow-right"></uk-icon>
+                            </a>           
+                        </div>
+                    </div>
+                </div>
+                  
+            </div>
+
+
+              
+        </div>
+
+        <!-- Empty Space -->
+        <div class="col-span-3">
+            <!-- This space is intentionally left empty -->
+        </div>
+
+    </div>
 </body>
 </html>
