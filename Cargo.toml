@@ -1,3 +1,10 @@
+[workspace]
+members = [
+    "lib/markdown-rs",
+    "lib/markdown-rs/generate",
+    "lib/markdown-rs/mdast_util_to_markdown",
+]
+
 [package]
 name = "frankmark"
 version = "0.1.0"
@@ -10,3 +17,4 @@ toml = { version = "0.9.2", features = ["preserve_order"] }
 serde = { version = "1.0", features = ["derive"] }
 thiserror = "1.0"
 indexmap = { version = "2.0", features = ["serde"] }
+markdown = { path = "lib/markdown-rs" }

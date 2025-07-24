@@ -3,7 +3,7 @@ markdown = { path = "../", version = "1.0.0" }
 regex = { version = "1" }
 
 [dev-dependencies]
-pretty_assertions = { workspace = true }
+pretty_assertions = "1"
 
 [package]
 description = "Markdown to AST"

@@ -11,7 +11,7 @@ unicode-id = { features = ["no_std"], version = "0.3" }
 [dev-dependencies]
 criterion = "0.5"
 env_logger = "0.11"
-pretty_assertions = { workspace = true }
+pretty_assertions = "1"
 serde_json = { version = "1" }
 swc_core = { version = "22", features = [
   "common",
@@ -39,9 +39,3 @@ name = "markdown"
 repository = "https://github.com/wooorm/markdown-rs"
 rust-version = "1.56"
 version = "1.0.0"
-
-[workspace]
-members = ["generate", "mdast_util_to_markdown"]
-
-[workspace.dependencies]
-pretty_assertions = "1"
