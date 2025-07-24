@@ -163,3 +163,13 @@ pub fn to_mdast(value: &str, options: &ParseOptions) -> Result<mdast::Node, mess
     let node = to_mdast::compile(&events, parse_state.bytes)?;
     Ok(node)
 }
+
+/// Turn markdown into FrankenUi HTML , with configuration.
+pub fn to_html_frankenui_with_options(value: &str, options: &Options) -> Result<String, message::Message> {
+    let (events, parse_state) = parser::parse(value, &options.parse)?;
+    Ok(to_html_frankenui::compile(
+        &events,
+        parse_state.bytes,
+        &options.compile,
+    ))
+}

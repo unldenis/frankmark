@@ -11,7 +11,7 @@ mod error;
 use config::parse_config;
 use error::FrankmarkResult;
 
-use crate::config::Config;
+use crate::{config::Config, error::FrankmarkError};
 
 fn generate_id(chars: usize) -> String {
     let s: String = rand::rng()
@@ -158,6 +158,10 @@ fn parse_directory(config: &Config, config_folder_path: &str) -> FrankmarkResult
                     format!("# {}", page_name)
                 }
             };
+
+            // Convert markdown to FrankenUi HTML
+            let content = markdown::to_html_frankenui_with_options(&content, &markdown::Options::gfm())
+                .map_err(|e| FrankmarkError::MarkdownError(e))?;
 
             let page = Page::new(
                 page_name.to_string(),

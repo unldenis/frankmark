@@ -27,6 +27,9 @@ pub enum FrankmarkError {
 
     #[error("Deserialization error: {0}")]
     DeserializationError(#[from] toml::de::Error),
+
+    #[error("Markdown error: {0}")]
+    MarkdownError(markdown::message::Message),
 }
 
 

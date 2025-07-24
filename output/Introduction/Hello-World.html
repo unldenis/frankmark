@@ -5,6 +5,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Test Page</title>
 
+  <!-- Highlight.js -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/default.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js"></script>
+  <!-- and it's easy to individually load additional languages -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/languages/go.min.js"></script>
+  <script>hljs.highlightAll();</script>
+
   <!-- FrankenUI CSS -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/franken-ui@2.1.0-next.16/dist/css/core.min.css"/>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/franken-ui@2.1.0-next.16/dist/css/utilities.min.css"/>
@@ -159,6 +166,15 @@
                     </ul>   
                 </li>
                 
+                <li class="uk-parent">
+                    <a href="#">Portal <span data-uk-nav-parent-icon></span></a>
+                    <ul class="uk-nav-sub">
+                        
+                        <li class=""><a href="../Portal/Intro.html">Intro</a></li>
+                        
+                    </ul>   
+                </li>
+                
             </ul>
 
         </aside>
@@ -173,7 +189,7 @@
         <div class="col-span-6">
             <div class="pt-6">
                 <div class="content">
-                  # Hello-World page
+                  <h1 class="uk-h1 mt-4">Hello-World page</h1>
                 </div>
 
                 <!-- If has next page -->
