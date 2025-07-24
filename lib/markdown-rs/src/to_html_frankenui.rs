@@ -479,7 +479,7 @@ fn on_enter_raw_flow(context: &mut CompileContext) {
 fn on_enter_raw_text(context: &mut CompileContext) {
     context.raw_text_inside = true;
     if !context.image_alt_inside {
-        context.push("<code");
+        context.push("<code class=\"uk-codespan\"");
         if context.events[context.index].name == Name::MathText {
             context.push(" class=\"language-math math-inline\"");
         }
@@ -1234,6 +1234,11 @@ fn on_exit_heading_atx(context: &mut CompileContext) {
         .expect("`heading_atx_rank` must be set in headings");
 
     context.push("</h1>");
+
+    if rank == 1 || rank == 2 {
+        context.line_ending_if_needed();
+        context.push("<hr class=\"uk-hr mb-6\"/>");
+    }
 }
 
 /// Handle [`Exit`][Kind::Exit]:[`HeadingAtxSequence`][Name::HeadingAtxSequence].
@@ -1249,7 +1254,7 @@ fn on_exit_heading_atx_sequence(context: &mut CompileContext) {
         context.heading_atx_rank = Some(rank);
         context.push("<h1 class=\"uk-h");
         context.push(&rank.to_string());
-        context.push(" mt-4\">");
+        context.push(" mt-8 mb-4\">");
     }
 }
 
@@ -1279,9 +1284,14 @@ fn on_exit_heading_setext_underline_sequence(context: &mut CompileContext) {
     context.line_ending_if_needed();
     context.push("<h1 class=\"uk-h");
     context.push(rank);
-    context.push(" mt-4\">");
+    context.push(" mt-8 mb-4\">");
     context.push(&text);
     context.push("</h1>");
+
+    if rank == "1" || rank == "2" {
+        context.line_ending_if_needed();
+        context.push("<hr class=\"uk-hr mb-6\"/>");
+    }
 }
 
 /// Handle [`Exit`][Kind::Exit]:{[`HtmlFlow`][Name::HtmlFlow],[`HtmlText`][Name::HtmlText]}.
