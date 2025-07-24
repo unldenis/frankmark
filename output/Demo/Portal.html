@@ -143,10 +143,10 @@
         <aside class="col-span-2">
             
 
-            <ul class="uk-nav-default mx-auto mt-4 ml-6 mr-6" data-uk-nav="collapsible: false">
+            <ul class="uk-nav uk-nav-default mx-auto mt-4 ml-6 mr-6" data-uk-nav="collapsible: false">
                 <div class="uk-nav-header">Documentation</div>
                 
-                <li class="uk-parent">
+                <li class="uk-parent ">
                     <a href="#">Introduction <span data-uk-nav-parent-icon></span></a>
                     <ul class="uk-nav-sub">
                         
@@ -157,20 +157,13 @@
                     </ul>   
                 </li>
                 
-                <li class="uk-parent">
-                    <a href="#">Changelog <span data-uk-nav-parent-icon></span></a>
+                <li class="uk-parent uk-open">
+                    <a href="#">Demo <span data-uk-nav-parent-icon></span></a>
                     <ul class="uk-nav-sub">
                         
-                        <li class="uk-active"><a href="../Changelog/Last.html">Last</a></li>
+                        <li class=""><a href="../Demo/Example.html">Example</a></li>
                         
-                    </ul>   
-                </li>
-                
-                <li class="uk-parent">
-                    <a href="#">Portal <span data-uk-nav-parent-icon></span></a>
-                    <ul class="uk-nav-sub">
-                        
-                        <li class=""><a href="../Portal/Intro.html">Intro</a></li>
+                        <li class="uk-active"><a href="../Demo/Portal.html">Portal</a></li>
                         
                     </ul>   
                 </li>
@@ -189,8 +182,112 @@
         <div class="col-span-6">
             <div class="pt-6">
                 <div class="content">
-                  <h1 class="uk-h1 mt-8 mb-4">Last</h1>
+                  <h1 class="uk-h1 mt-8 mb-4">Portal</h1>
 <hr class="uk-hr mb-6"/>
+<p class="uk-paragraph">Portal is a Nostr-based authentication and payment SDK allowing applications to authenticate users and process payments through Nostr and Lightning Network.</p>
+<h1 class="uk-h2 mt-8 mb-4">Project Overview</h1>
+<hr class="uk-hr mb-6"/>
+<p class="uk-paragraph">Portal provides a comprehensive solution for:</p>
+<ul class="uk-list uk-list-disc">
+<li>Nostr-based user authentication</li>
+<li>Single and recurring payment processing</li>
+<li>Profile management and verification</li>
+<li>Cross-platform integration (Rust, TypeScript, and more)</li>
+</ul>
+<h1 class="uk-h2 mt-8 mb-4">Repository Structure</h1>
+<hr class="uk-hr mb-6"/>
+<ul class="uk-list uk-list-disc">
+<li><code class="uk-codespan">/app</code> - API exposed to the app</li>
+<li><code class="uk-codespan">/backend</code> - Example backend</li>
+<li><code class="uk-codespan">/cli</code> - Command-line interface tool</li>
+<li><code class="uk-codespan">/rates</code> - Bitcoin exchange rates from multiple sources</li>
+<li><code class="uk-codespan">/react-native</code> - React Native bindings for the <code class="uk-codespan">app</code> crate</li>
+<li><code class="uk-codespan">/rest</code> - SDK wrapper exposing a REST/websocket interface</li>
+<li><code class="uk-codespan">/sdk</code> - Core SDK implementation</li>
+<li><code class="uk-codespan">/rest/clients/ts</code> - TypeScript client for the REST API</li>
+</ul>
+<h1 class="uk-h2 mt-8 mb-4">Getting Started</h1>
+<hr class="uk-hr mb-6"/>
+<h1 class="uk-h3 mt-8 mb-4">Prerequisites</h1>
+<ul class="uk-list uk-list-disc">
+<li>Rust toolchain (latest stable)</li>
+<li>Node.js and npm (for TypeScript client)</li>
+</ul>
+<h1 class="uk-h3 mt-8 mb-4">Building the Core SDK</h1>
+<pre><code class="language-bash">cargo build --release
+</code></pre>
+<h1 class="uk-h3 mt-8 mb-4">Running the SDK Daemon with Docker</h1>
+<p class="uk-paragraph">You can run the SDK Daemon using Docker. The image is published on Docker Hub as <code class="uk-codespan">getportal/sdk-daemon:latest</code>.</p>
+<h1 class="uk-h3 mt-8 mb-4">Run with Docker (pre-built image)</h1>
+<pre><code class="language-bash">docker run --rm --name portal-sdk-daemon -d \
+  -p 3000:3000 \
+  -e NOSTR_KEY=&lt;your-nsec-here&gt; \
+  getportal/sdk-daemon:latest
+</code></pre>
+<ul class="uk-list uk-list-disc">
+<li>The daemon will be available on port 3000.</li>
+<li>The default auth token is 'remember-to-change-this'</li>
+<li>You can override environment variables as needed (see below).</li>
+</ul>
+<h1 class="uk-h3 mt-8 mb-4">Environment Variables</h1>
+<ul class="uk-list uk-list-disc">
+<li><code class="uk-codespan">AUTH_TOKEN</code>: Authentication token for API access</li>
+<li><code class="uk-codespan">NOSTR_KEY</code>: Your Nostr private key in hex format</li>
+<li><code class="uk-codespan">NWC_URL</code>: (Optional) Nostr Wallet Connect URL</li>
+<li><code class="uk-codespan">NOSTR_SUBKEY_PROOF</code>: (Optional) Nostr subkey proof</li>
+<li><code class="uk-codespan">NOSTR_RELAYS</code>: (Optional) Comma-separated list of relay URLs</li>
+</ul>
+<h1 class="uk-h2 mt-8 mb-4">Using the TypeScript Client</h1>
+<hr class="uk-hr mb-6"/>
+<h1 class="uk-h3 mt-8 mb-4">Installation</h1>
+<pre><code class="language-bash">npm install portal-sdk
+</code></pre>
+<h1 class="uk-h3 mt-8 mb-4">Basic Usage</h1>
+<pre><code class="language-typescript">import { PortalClient } from 'portal-sdk';
+
+// Initialize client
+const client = new PortalClient({
+  serverUrl: 'ws://localhost:3000/ws'
+});
+
+// Authenticate
+await client.connect('your-auth-token');
+
+// Generate authentication URL
+const { url, stream_id } = await client.getKeyHandshakeUrl();
+
+// Request payment
+const paymentResult = await client.requestSinglePayment({
+  main_key: 'user-pubkey',
+  subkeys: [],
+  payment_request: {
+    description: 'Product purchase',
+    amount: 1000,
+    currency: 'Millisats'
+  }
+});
+
+// Close connection when done
+client.disconnect();
+</code></pre>
+<h1 class="uk-h2 mt-8 mb-4">Features</h1>
+<hr class="uk-hr mb-6"/>
+<h1 class="uk-h3 mt-8 mb-4">Authentication</h1>
+<p class="uk-paragraph">Secure user authentication using Nostr protocol, supporting both main keys and delegated subkeys.</p>
+<h1 class="uk-h3 mt-8 mb-4">Payment Processing</h1>
+<ul class="uk-list uk-list-disc">
+<li><strong class="font-bold">Single Payments</strong>: One-time payments via Lightning Network</li>
+<li><strong class="font-bold">Recurring Payments</strong>: Subscription-based payments with customizable recurrence patterns</li>
+<li><strong class="font-bold">Payment Status Tracking</strong>: Real-time updates on payment status</li>
+</ul>
+<h1 class="uk-h3 mt-8 mb-4">Profile Management</h1>
+<p class="uk-paragraph">Fetch and verify user profiles through Nostr's social graph.</p>
+<h1 class="uk-h2 mt-8 mb-4">API Documentation</h1>
+<hr class="uk-hr mb-6"/>
+<p class="uk-paragraph">See the <code class="uk-codespan">/rest/README.md</code> file for detailed API documentation.</p>
+<h1 class="uk-h2 mt-8 mb-4">License</h1>
+<hr class="uk-hr mb-6"/>
+<p class="uk-paragraph">This project is licensed under the MIT License, except for the app library.</p>
                 </div>
 
                 <!-- If has next page -->

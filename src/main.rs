@@ -57,6 +57,16 @@ impl<'a> MainTemplate<'a> {
         let folder = self.get_folder_by_page(page);
         format!("../{}/{}.html", folder.name, page.display_name)
     }
+
+    pub fn is_current_page_folder(&self, folder: &Folder) -> String {
+        let current_folder = self.get_folder_by_page(self.current_page);
+
+        if current_folder.name == folder.name {
+            return "uk-open".to_string();
+        }
+
+        "".to_string()
+    }
 }
 
 #[derive(Debug)]

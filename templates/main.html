@@ -143,10 +143,10 @@
         <aside class="col-span-2">
             
 
-            <ul class="uk-nav-default mx-auto mt-4 ml-6 mr-6" data-uk-nav="collapsible: false">
+            <ul class="uk-nav uk-nav-default mx-auto mt-4 ml-6 mr-6" data-uk-nav="collapsible: false">
                 <div class="uk-nav-header">Documentation</div>
                 {% for folder in folders %}
-                <li class="uk-parent">
+                <li class="uk-parent {{ is_current_page_folder(folder) }}">
                     <a href="#">{{ folder.name }} <span data-uk-nav-parent-icon></span></a>
                     <ul class="uk-nav-sub">
                         {% for page in folder.pages %}
