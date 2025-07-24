@@ -452,7 +452,7 @@ fn on_enter_buffer(context: &mut CompileContext) {
 fn on_enter_block_quote(context: &mut CompileContext) {
     context.tight_stack.push(false);
     context.line_ending_if_needed();
-    context.push("<blockquote>");
+    context.push("<blockquote class=\"uk-blockquote\">");
 }
 
 /// Handle [`Enter`][Kind::Enter]:[`CodeIndented`][Name::CodeIndented].
@@ -510,7 +510,7 @@ fn on_enter_definition_destination_string(context: &mut CompileContext) {
 /// Handle [`Enter`][Kind::Enter]:[`Emphasis`][Name::Emphasis].
 fn on_enter_emphasis(context: &mut CompileContext) {
     if !context.image_alt_inside {
-        context.push("<em>");
+        context.push("<em class=\"italic\">");
     }
 }
 
@@ -656,9 +656,9 @@ fn on_enter_list(context: &mut CompileContext) {
 
     // Note: no `>`.
     context.push(if context.events[context.index].name == Name::ListOrdered {
-        "<ol"
+        "<ul class=\"uk-list uk-list-decimal\""
     } else {
-        "<ul"
+        "<ul class=\"uk-list uk-list-disc\""
     });
     context.list_expect_first_marker = Some(true);
 }
@@ -681,7 +681,7 @@ fn on_enter_paragraph(context: &mut CompileContext) {
 
     if !tight {
         context.line_ending_if_needed();
-        context.push("<p>");
+        context.push("<p class=\"uk-paragraph\">");
     }
 }
 
@@ -702,7 +702,7 @@ fn on_enter_resource_destination_string(context: &mut CompileContext) {
 /// Handle [`Enter`][Kind::Enter]:[`Strong`][Name::Strong].
 fn on_enter_strong(context: &mut CompileContext) {
     if !context.image_alt_inside {
-        context.push("<strong>");
+        context.push("<strong class=\"font-bold\">");
     }
 }
 
@@ -1233,9 +1233,7 @@ fn on_exit_heading_atx(context: &mut CompileContext) {
         .take()
         .expect("`heading_atx_rank` must be set in headings");
 
-    context.push("</h");
-    context.push(&rank.to_string());
-    context.push(">");
+    context.push("</h1>");
 }
 
 /// Handle [`Exit`][Kind::Exit]:[`HeadingAtxSequence`][Name::HeadingAtxSequence].
@@ -1249,9 +1247,9 @@ fn on_exit_heading_atx_sequence(context: &mut CompileContext) {
         .len();
         context.line_ending_if_needed();
         context.heading_atx_rank = Some(rank);
-        context.push("<h");
+        context.push("<h1 class=\"uk-h");
         context.push(&rank.to_string());
-        context.push(">");
+        context.push(" mt-4\">");
     }
 }
 
@@ -1279,13 +1277,11 @@ fn on_exit_heading_setext_underline_sequence(context: &mut CompileContext) {
     let rank = if head == b'-' { "2" } else { "1" };
 
     context.line_ending_if_needed();
-    context.push("<h");
+    context.push("<h1 class=\"uk-h");
     context.push(rank);
-    context.push(">");
+    context.push(" mt-4\">");
     context.push(&text);
-    context.push("</h");
-    context.push(rank);
-    context.push(">");
+    context.push("</h1>");
 }
 
 /// Handle [`Exit`][Kind::Exit]:{[`HtmlFlow`][Name::HtmlFlow],[`HtmlText`][Name::HtmlText]}.
@@ -1349,11 +1345,7 @@ fn on_exit_line_ending(context: &mut CompileContext) {
 fn on_exit_list(context: &mut CompileContext) {
     context.tight_stack.pop();
     context.line_ending();
-    context.push(if context.events[context.index].name == Name::ListOrdered {
-        "</ol>"
-    } else {
-        "</ul>"
-    });
+    context.push("</ul>");
 }
 
 /// Handle [`Exit`][Kind::Exit]:[`ListItem`][Name::ListItem].
@@ -1447,7 +1439,7 @@ fn on_exit_media(context: &mut CompileContext) {
         if media.image {
             context.push("<img src=\"");
         } else {
-            context.push("<a href=\"");
+            context.push("<a class=\"uk-link\" href=\"");
         }
 
         let destination = if let Some(index) = definition_index {
@@ -1558,7 +1550,7 @@ fn on_exit_strong(context: &mut CompileContext) {
 /// Handle [`Exit`][Kind::Exit]:[`ThematicBreak`][Name::ThematicBreak].
 fn on_exit_thematic_break(context: &mut CompileContext) {
     context.line_ending_if_needed();
-    context.push("<hr />");
+    context.push("<hr class=\"uk-hr\"/>");
 }
 
 /// Generate a footnote section.
