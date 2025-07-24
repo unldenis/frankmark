@@ -32,16 +32,29 @@ struct MainTemplate<'a> {
     github_url: String,
     folders: &'a Vec<Folder>,
     current_page: &'a Page,
+
+    previous_page: Option<&'a Page>,
     next_page: Option<&'a Page>,
 }
 
 impl<'a> MainTemplate<'a> {
-    fn new(config: &Config, folders: &'a Vec<Folder>, current_page: &'a Page, next_page: Option<&'a Page>) -> Self {
+    fn new(
+        config: &Config,
+        folders: &'a Vec<Folder>,
+        current_page: &'a Page,
+        previous_page: Option<&'a Page>,
+        next_page: Option<&'a Page>,
+    ) -> Self {
         Self {
             title: "Test Page".to_string(),
-            github_url: config.package.github_url.clone().unwrap_or("https://github.com/unldenis/frankmark".to_string()),
+            github_url: config
+                .package
+                .github_url
+                .clone()
+                .unwrap_or("https://github.com/unldenis/frankmark".to_string()),
             folders: folders,
             current_page: current_page,
+            previous_page: previous_page,
             next_page: next_page,
         }
     }
@@ -95,6 +108,15 @@ impl Folder {
             None
         }
     }
+
+    pub fn get_previous_page(&self, current_page: &Page) -> Option<&Page> {
+        let current_page_index = self.pages.iter().position(|p| p.id == current_page.id)?;
+        if current_page_index > 0 {
+            Some(&self.pages[current_page_index - 1])
+        } else {
+            None
+        }
+    }
 }
 
 #[derive(Debug)]
@@ -131,19 +153,21 @@ fn parse_directory(config: &Config, config_folder_path: &str) -> FrankmarkResult
     // for each directory in the config
     for (folder_name, folder_pages) in config.directories.iter() {
         // Find the corresponding folder in the filesystem
-        let folder_entry = config_folder_entries.iter()
-            .find(|entry| {
-                if let Ok(metadata) = entry.metadata() {
-                    metadata.is_dir() && entry.file_name().to_string_lossy() == *folder_name
-                } else {
-                    false
-                }
-            });
+        let folder_entry = config_folder_entries.iter().find(|entry| {
+            if let Ok(metadata) = entry.metadata() {
+                metadata.is_dir() && entry.file_name().to_string_lossy() == *folder_name
+            } else {
+                false
+            }
+        });
 
         let folder_entry = match folder_entry {
             Some(entry) => entry,
             None => {
-                eprintln!("Warning: Folder '{}' not found in filesystem, skipping", folder_name);
+                eprintln!(
+                    "Warning: Folder '{}' not found in filesystem, skipping",
+                    folder_name
+                );
                 continue;
             }
         };
@@ -154,7 +178,7 @@ fn parse_directory(config: &Config, config_folder_path: &str) -> FrankmarkResult
         // Check if all pages from config exist and parse them
         for page_name in folder_pages.iter() {
             let page_file_path = folder_path.join(format!("{}.md", page_name));
-            
+
             if !page_file_path.exists() {
                 println!("Page {} not found in folder {}", page_name, folder_name);
                 continue;
@@ -164,20 +188,20 @@ fn parse_directory(config: &Config, config_folder_path: &str) -> FrankmarkResult
             let content = match fs::read_to_string(&page_file_path) {
                 Ok(content) => content,
                 Err(e) => {
-                    eprintln!("Warning: Failed to read page '{}': {}, using default content", page_name, e);
+                    eprintln!(
+                        "Warning: Failed to read page '{}': {}, using default content",
+                        page_name, e
+                    );
                     format!("# {}", page_name)
                 }
             };
 
             // Convert markdown to FrankenUi HTML
-            let content = markdown::to_html_frankenui_with_options(&content, &markdown::Options::gfm())
-                .map_err(|e| FrankmarkError::MarkdownError(e))?;
+            let content =
+                markdown::to_html_frankenui_with_options(&content, &markdown::Options::gfm())
+                    .map_err(|e| FrankmarkError::MarkdownError(e))?;
 
-            let page = Page::new(
-                page_name.to_string(),
-                page_name.to_string(),
-                content
-            );
+            let page = Page::new(page_name.to_string(), page_name.to_string(), content);
             folder.add_page(page);
         }
 
@@ -195,11 +219,10 @@ fn generate_site() -> FrankmarkResult<()> {
     // Parse the configuration file
     let config = parse_config("example/frankmark.toml")?;
     println!("✓ Configuration loaded successfully");
-    
+
     // Access the parsed data
     println!("GitHub URL: {:?}", config.package.github_url);
     println!("Directories: {:?}", config.directories);
-    
 
     // try to parse the 'example' directory
     let folders = parse_directory(&config, "example")?;
@@ -222,7 +245,13 @@ fn generate_site() -> FrankmarkResult<()> {
         fs::create_dir_all(format!("{}/{}", output_path, folder.name))?;
 
         for page in folder.pages.iter() {
-            let page_template = MainTemplate::new(&config, &folders, page, folder.get_next_page(page)); // instantiate your struct
+            let page_template = MainTemplate::new(
+                &config,
+                &folders,
+                page,
+                folder.get_previous_page(page),
+                folder.get_next_page(page),
+            ); // instantiate your struct
             let rendered = page_template.render()?; // then render it.
 
             // write to file
@@ -234,7 +263,7 @@ fn generate_site() -> FrankmarkResult<()> {
             total_pages += 1;
         }
     }
-    
+
     println!("✓ Successfully generated {} pages", total_pages);
     Ok(())
 }

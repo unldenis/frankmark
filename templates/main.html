@@ -172,6 +172,28 @@
                   {{ current_page.content | safe }}
                 </div>
 
+                <!-- If has previous page -->
+                {% if previous_page.is_some() %}
+                <div class="mt-6">
+                    <div class="uk-card max-w-lg mr-auto" href="{{ previous_page.unwrap().display_name }}">
+                        <div class="uk-card-body flex justify-between">
+                            <a class="uk-btn uk-btn-default uk-btn-icon" href="{{ previous_page.unwrap().display_name }}.html">
+                                <uk-icon icon="arrow-left"></uk-icon>
+                            </a>
+
+                            <div class="">
+                              <p class="mt-2 text-muted-foreground">
+                                  Previous
+                              </p>
+                              <p>
+                                  {{ previous_page.unwrap().display_name }}
+                              </p>
+                          </div>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+
                 <!-- If has next page -->
                 {% if next_page.is_some() %}
                 <div class="mt-6">
@@ -192,7 +214,10 @@
                         </div>
                     </div>
                 </div>
-                {% endif %}              
+                {% endif %}
+
+                <!-- Add space -->
+                <div class="h -10"></div>
             </div>
 
 
