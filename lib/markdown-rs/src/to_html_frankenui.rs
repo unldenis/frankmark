@@ -539,7 +539,7 @@ fn on_enter_gfm_footnote_call(context: &mut CompileContext) {
 /// Handle [`Enter`][Kind::Enter]:[`GfmStrikethrough`][Name::GfmStrikethrough].
 fn on_enter_gfm_strikethrough(context: &mut CompileContext) {
     if !context.image_alt_inside {
-        context.push("<del>");
+        context.push("<del class=\"line-through\">");
     }
 }
 
@@ -548,7 +548,7 @@ fn on_enter_gfm_table(context: &mut CompileContext) {
     let align = gfm_table_align(context.events, context.index);
     context.gfm_table_align = Some(align);
     context.line_ending_if_needed();
-    context.push("<table>");
+    context.push("<div class=\"uk-overflow-auto\"><table class=\"uk-table uk-table-divider\">");
 }
 
 /// Handle [`Enter`][Kind::Enter]:[`GfmTableBody`][Name::GfmTableBody].
@@ -601,7 +601,7 @@ fn on_enter_gfm_table_row(context: &mut CompileContext) {
 /// Handle [`Enter`][Kind::Enter]:[`GfmTaskListItemCheck`][Name::GfmTaskListItemCheck].
 fn on_enter_gfm_task_list_item_check(context: &mut CompileContext) {
     if !context.image_alt_inside {
-        context.push("<input type=\"checkbox\" ");
+        context.push("<input class=\"uk-checkbox\" type=\"checkbox\" ");
         if !context.options.gfm_task_list_item_checkable {
             context.push("disabled=\"\" ");
         }
@@ -1160,7 +1160,7 @@ fn on_exit_gfm_strikethrough(context: &mut CompileContext) {
 fn on_exit_gfm_table(context: &mut CompileContext) {
     context.gfm_table_align = None;
     context.line_ending_if_needed();
-    context.push("</table>");
+    context.push("</table></div>");
 }
 
 /// Handle [`Exit`][Kind::Exit]:[`GfmTableBody`][Name::GfmTableBody].
