@@ -1265,10 +1265,10 @@ fn on_exit_heading_atx_sequence(context: &mut CompileContext) {
 /// Handle [`Exit`][Kind::Exit]:[`HeadingAtxText`][Name::HeadingAtxText].
 fn on_exit_heading_atx_text(context: &mut CompileContext) {
     let value = context.resume();
-    
+
     // Generate ID from the heading text using slugify
     let id = slugify(&value);
-    
+
     // Insert the id attribute before the closing quote of the opening tag
     // We need to go back and modify the opening tag
     let last_buffer = context.buffers.last_mut().unwrap();
@@ -1277,7 +1277,7 @@ fn on_exit_heading_atx_text(context: &mut CompileContext) {
         let after_id = &last_buffer[pos..];
         *last_buffer = format!("{} id=\"{}\"{}", before_id, id, after_id);
     }
-    
+
     context.push(&value);
 }
 
@@ -1562,9 +1562,10 @@ fn on_exit_reference_string(context: &mut CompileContext) {
 /// Handle [`Exit`][Kind::Exit]:[`ResourceDestinationString`][Name::ResourceDestinationString].
 fn on_exit_resource_destination_string(context: &mut CompileContext) {
     let buf = context.resume();
-    
+
     // Convert .md extensions to .html only for relative links
-    let processed_buf = if buf.ends_with(".md") && !buf.contains("://") && !buf.starts_with("http") {
+    let processed_buf = if buf.ends_with(".md") && !buf.contains("://") && !buf.starts_with("http")
+    {
         let mut new_buf = buf.clone();
         new_buf.truncate(new_buf.len() - 3);
         new_buf.push_str(".html");
@@ -1572,7 +1573,7 @@ fn on_exit_resource_destination_string(context: &mut CompileContext) {
     } else {
         buf
     };
-    
+
     context.media_stack.last_mut().unwrap().destination = Some(processed_buf);
     context.encode_html = true;
 }

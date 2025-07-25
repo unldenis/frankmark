@@ -27,7 +27,6 @@ struct MainTemplate<'a> {
     current_page: &'a Page,
     previous_page: Option<&'a Page>,
     next_page: Option<&'a Page>,
-    is_root: bool,
 }
 
 impl<'a> MainTemplate<'a> {
@@ -37,7 +36,6 @@ impl<'a> MainTemplate<'a> {
         current_page: &'a Page,
         previous_page: Option<&'a Page>,
         next_page: Option<&'a Page>,
-        is_root: bool,
     ) -> Self {
         Self {
             book,
@@ -45,16 +43,23 @@ impl<'a> MainTemplate<'a> {
             current_page,
             previous_page,
             next_page,
-            is_root,
         }
     }
 
     pub fn get_page_url(&self, page: &Page) -> String {
-        if self.is_root {
-            format!("{}/{}.html", page.folder_name, page.display_name)
-        } else {
-            format!("../{}/{}.html", page.folder_name, page.display_name)
+        format!("../{}/{}.html", page.folder_name, page.display_name)
+    }
+
+    pub fn get_first_page_url(&self) -> String {
+        if let Some(first_folder) = self.folders.first() {
+            if let Some(first_page) = first_folder.pages.first() {
+                return format!(
+                    "../{}/{}.html",
+                    first_page.folder_name, first_page.display_name
+                );
+            }
         }
+        String::new()
     }
 
     pub fn is_current_page_folder(&self, folder: &Folder) -> String {
@@ -251,12 +256,11 @@ fn parse_directory(config: &Config, config_folder_path: &str) -> FrankmarkResult
 
         // Process all markdown content in batch
         for (page_name, content) in page_contents {
-
-            let mdast : Node = markdown::to_mdast(&content, &markdown::ParseOptions::gfm()).unwrap();
+            let mdast: Node = markdown::to_mdast(&content, &markdown::ParseOptions::gfm()).unwrap();
 
             let headings = read_headings(&mdast);
             println!("Headings for {}: {:?}", page_name, headings);
-            
+
             // Convert markdown to FrankenUi HTML
             let html_content =
                 match markdown::to_html_frankenui_with_options(&content, &markdown::Options::gfm())
@@ -306,16 +310,15 @@ fn read_headings(mdast: &Node) -> Vec<Heading> {
                     } else {
                         eprintln!("Warning: Heading has no text");
                     }
-                },
+                }
                 None => {
                     eprintln!("Warning: Heading has no children text");
-                },
+                }
             }
         }
     });
     headings
 }
-
 
 // Optimized site generation with better file handling
 fn generate_site(folder_path: &str) -> FrankmarkResult<()> {
@@ -353,7 +356,6 @@ fn generate_site(folder_path: &str) -> FrankmarkResult<()> {
                 page,
                 navigator.get_previous_page(page),
                 navigator.get_next_page(page),
-                false,
             );
 
             let rendered = page_template.render()?;
@@ -370,22 +372,6 @@ fn generate_site(folder_path: &str) -> FrankmarkResult<()> {
                 first_page = Some(page);
             }
         }
-    }
-
-    // Generate index page
-    if let Some(first_page) = first_page {
-        let page_template = MainTemplate::new(
-            &config.book,
-            &folders,
-            first_page,
-            None,
-            navigator.get_next_page(first_page),
-            true,
-        );
-        let rendered = page_template.render()?;
-        let mut file = File::create(output_path.join("index.html"))?;
-        file.write_all(rendered.as_bytes())?;
-        println!("✓ Generated index.html");
     }
 
     println!("✓ Successfully generated {} pages", total_pages);
@@ -405,7 +391,6 @@ fn main() {
         std::process::exit(1);
     }
 }
-
 
 /// Visit.
 fn visit<Visitor>(node: &Node, visitor: Visitor)
