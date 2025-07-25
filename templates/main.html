@@ -177,7 +177,7 @@
                 <div class="mt-6">
                     <div class="uk-card max-w-lg mr-auto" href="{{ previous_page.unwrap().display_name }}">
                         <div class="uk-card-body flex justify-between">
-                            <a class="uk-btn uk-btn-default uk-btn-icon" href="{{ previous_page.unwrap().display_name }}.html">
+                            <a class="uk-btn uk-btn-default uk-btn-icon" href="{{ get_page_url(previous_page.unwrap()) }}">
                                 <uk-icon icon="arrow-left"></uk-icon>
                             </a>
 
@@ -208,19 +208,17 @@
                                 </p>
                             </div>
 
-                            <a class="uk-btn uk-btn-default uk-btn-icon" href="{{ next_page.unwrap().display_name }}.html">
+                            <a class="uk-btn uk-btn-default uk-btn-icon" href="{{ get_page_url(next_page.unwrap()) }}">
                                 <uk-icon icon="arrow-right"></uk-icon>
                             </a>           
                         </div>
                     </div>
                 </div>
                 {% endif %}
-
-                <!-- Add space -->
-                <div class="h -10"></div>
             </div>
 
-
+            <!-- Add space -->
+            <div class="h-16"></div>
               
         </div>
 

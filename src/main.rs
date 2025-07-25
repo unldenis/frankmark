@@ -1,27 +1,18 @@
+mod config;
+mod error;
+mod utils;
+
 use std::{
     fs::{self, File},
     io::Write,
 };
 
 use askama::Template; // bring trait in scope
-use rand::{Rng, distr::Alphanumeric}; // 0.8
 
-mod config;
-mod error;
 use config::parse_config;
 use error::FrankmarkResult;
 
 use crate::{config::Config, error::FrankmarkError};
-
-fn generate_id(chars: usize) -> String {
-    let s: String = rand::rng()
-        .sample_iter(&Alphanumeric)
-        .take(chars)
-        .map(char::from)
-        .collect();
-
-    s
-}
 
 #[derive(Template)] // this will generate the code...
 #[template(path = "main.html")] // using the template in this path, relative
@@ -99,24 +90,39 @@ impl Folder {
     pub fn add_page(&mut self, page: Page) {
         self.pages.push(page);
     }
+}
 
-    pub fn get_next_page(&self, current_page: &Page) -> Option<&Page> {
-        let current_page_index = self.pages.iter().position(|p| p.id == current_page.id)?;
-        if current_page_index < self.pages.len() - 1 {
-            Some(&self.pages[current_page_index + 1])
-        } else {
-            None
+// Global navigation functions that work across all folders
+fn get_global_next_page<'a>(folders: &'a [Folder], current_page: &Page) -> Option<&'a Page> {
+    let mut found_current = false;
+
+    for folder in folders {
+        for page in &folder.pages {
+            if found_current {
+                return Some(page);
+            }
+            if page.id == current_page.id {
+                found_current = true;
+            }
         }
     }
 
-    pub fn get_previous_page(&self, current_page: &Page) -> Option<&Page> {
-        let current_page_index = self.pages.iter().position(|p| p.id == current_page.id)?;
-        if current_page_index > 0 {
-            Some(&self.pages[current_page_index - 1])
-        } else {
-            None
+    None
+}
+
+fn get_global_previous_page<'a>(folders: &'a [Folder], current_page: &Page) -> Option<&'a Page> {
+    let mut previous_page: Option<&'a Page> = None;
+
+    for folder in folders {
+        for page in &folder.pages {
+            if page.id == current_page.id {
+                return previous_page;
+            }
+            previous_page = Some(page);
         }
     }
+
+    None
 }
 
 #[derive(Debug)]
@@ -131,7 +137,7 @@ struct Page {
 impl Page {
     pub fn new(full_name: String, display_name: String, content: String) -> Self {
         Self {
-            id: generate_id(10),
+            id: utils::generate_id(10),
             full_name,
             display_name,
             content,
@@ -249,8 +255,8 @@ fn generate_site() -> FrankmarkResult<()> {
                 &config,
                 &folders,
                 page,
-                folder.get_previous_page(page),
-                folder.get_next_page(page),
+                get_global_previous_page(&folders, page),
+                get_global_next_page(&folders, page),
             ); // instantiate your struct
             let rendered = page_template.render()?; // then render it.
 
