@@ -7,12 +7,15 @@ use crate::error::FrankmarkResult;
 
 #[derive(Debug, Deserialize)]
 pub struct Config {
-    pub package: Package,
+    pub book: Book,
     pub directories: IndexMap<String, Vec<String>>,
 }
 
 #[derive(Debug, Deserialize)]
-pub struct Package {
+pub struct Book {
+    pub title: String,
+    pub description: Option<String>,
+    pub author: Option<String>,
     pub github_url: Option<String>,
 }
 

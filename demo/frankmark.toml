@@ -1,4 +1,5 @@
-[package]
+[book]
+title = "demo Documentation"
 github_url = "https://github.com/unldenis/frankmark"
 
 [directories]

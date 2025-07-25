@@ -15,13 +15,12 @@ use askama::Template;
 use config::parse_config;
 use error::FrankmarkResult;
 
-use crate::config::Config;
+use crate::config::{Book, Config};
 
 #[derive(Template)]
 #[template(path = "main.html")]
 struct MainTemplate<'a> {
-    title: String,
-    github_url: String,
+    book: &'a Book,
     folders: &'a Vec<Folder>,
     current_page: &'a Page,
     previous_page: Option<&'a Page>,
@@ -31,7 +30,7 @@ struct MainTemplate<'a> {
 
 impl<'a> MainTemplate<'a> {
     fn new(
-        config: &Config,
+        book: &'a Book,
         folders: &'a Vec<Folder>,
         current_page: &'a Page,
         previous_page: Option<&'a Page>,
@@ -39,12 +38,7 @@ impl<'a> MainTemplate<'a> {
         is_root: bool,
     ) -> Self {
         Self {
-            title: "Test Page".to_string(),
-            github_url: config
-                .package
-                .github_url
-                .clone()
-                .unwrap_or_else(|| "https://github.com/unldenis/frankmark".to_string()),
+            book,
             folders,
             current_page,
             previous_page,
@@ -309,7 +303,7 @@ fn generate_site(folder_path: &str) -> FrankmarkResult<()> {
 
         for page in &folder.pages {
             let page_template = MainTemplate::new(
-                &config,
+                &config.book,
                 &folders,
                 page,
                 navigator.get_previous_page(page),
@@ -336,7 +330,7 @@ fn generate_site(folder_path: &str) -> FrankmarkResult<()> {
     // Generate index page
     if let Some(first_page) = first_page {
         let page_template = MainTemplate::new(
-            &config,
+            &config.book,
             &folders,
             first_page,
             None,

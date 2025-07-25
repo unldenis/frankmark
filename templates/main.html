@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>{{ title }}</title>
+  <title>{{ current_page.display_name }} - {{ book.title }}</title>
 
   <!-- Highlight.js -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/default.min.css">
@@ -62,10 +62,13 @@
                     </div>
 
                     <div class="flex gap-2">
-                        <a class="uk-btn uk-btn-secondary uk-btn-sm sm:inline-flex" href="{{ github_url }}">
-                            <uk-icon icon="github"></uk-icon>
-                            <span>Star on Github</span>
-                        </a>
+                        {% if book.github_url.is_some() %}
+                          <a class="uk-btn uk-btn-secondary uk-btn-sm sm:inline-flex" href="{{ book.github_url.clone().unwrap() }}">
+                              <uk-icon icon="github"></uk-icon>
+                              <span>Star on Github</span>
+                          </a>
+                        {% endif %}
+
                         <a class="uk-btn uk-btn-secondary uk-btn-sm sm:inline-flex" href="#theme-switcher-modal" data-uk-toggle>
                             <uk-icon icon="palette"></uk-icon>
                         </a>
