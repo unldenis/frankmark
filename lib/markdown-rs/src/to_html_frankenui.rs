@@ -1562,7 +1562,18 @@ fn on_exit_reference_string(context: &mut CompileContext) {
 /// Handle [`Exit`][Kind::Exit]:[`ResourceDestinationString`][Name::ResourceDestinationString].
 fn on_exit_resource_destination_string(context: &mut CompileContext) {
     let buf = context.resume();
-    context.media_stack.last_mut().unwrap().destination = Some(buf);
+    
+    // Convert .md extensions to .html only for relative links
+    let processed_buf = if buf.ends_with(".md") && !buf.contains("://") && !buf.starts_with("http") {
+        let mut new_buf = buf.clone();
+        new_buf.truncate(new_buf.len() - 3);
+        new_buf.push_str(".html");
+        new_buf
+    } else {
+        buf
+    };
+    
+    context.media_stack.last_mut().unwrap().destination = Some(processed_buf);
     context.encode_html = true;
 }
 
