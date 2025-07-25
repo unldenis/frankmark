@@ -219,7 +219,7 @@
                         <ul class="uk-nav uk-nav-default text-sm">
                           {% for heading in current_page.headings %}
                             {% if heading.level == 2 %}
-                              <li><a href="#{{ heading.text }}" class="text-muted-foreground hover:text-foreground">{{ heading.text }}</a></li>
+                              <li><a href="#{{ heading.id }}" class="text-muted-foreground hover:text-foreground">{{ heading.text }}</a></li>
                             {% endif %}
                           {% endfor %}
                         </ul>

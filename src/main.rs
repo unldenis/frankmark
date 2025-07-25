@@ -11,6 +11,7 @@ use std::{
 };
 
 use askama::Template;
+use slug::slugify;
 
 use config::parse_config;
 use error::FrankmarkResult;
@@ -155,6 +156,7 @@ struct Page {
 struct Heading {
     text: String,
     level: u8,
+    id: String,
 }
 
 impl Page {
@@ -299,6 +301,7 @@ fn read_headings(mdast: &Node) -> Vec<Heading> {
                         headings.push(Heading {
                             text: text.value.clone(),
                             level: heading.depth,
+                            id: slugify(&text.value),
                         });
                     } else {
                         eprintln!("Warning: Heading has no text");

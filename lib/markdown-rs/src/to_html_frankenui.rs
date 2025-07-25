@@ -20,6 +20,7 @@ use alloc::{
     vec::Vec,
 };
 use core::str;
+use slug::slugify;
 
 /// Link, image, or footnote call.
 /// Resource or reference.
@@ -1255,13 +1256,28 @@ fn on_exit_heading_atx_sequence(context: &mut CompileContext) {
         context.heading_atx_rank = Some(rank);
         context.push("<h1 class=\"uk-h");
         context.push(&rank.to_string());
-        context.push(" mt-8 mb-4\">");
+        context.push(" mt-8 mb-4\"");
+        // We'll add the id after we get the text content
+        context.push(">");
     }
 }
 
 /// Handle [`Exit`][Kind::Exit]:[`HeadingAtxText`][Name::HeadingAtxText].
 fn on_exit_heading_atx_text(context: &mut CompileContext) {
     let value = context.resume();
+    
+    // Generate ID from the heading text using slugify
+    let id = slugify(&value);
+    
+    // Insert the id attribute before the closing quote of the opening tag
+    // We need to go back and modify the opening tag
+    let last_buffer = context.buffers.last_mut().unwrap();
+    if let Some(pos) = last_buffer.rfind(">") {
+        let before_id = &last_buffer[..pos];
+        let after_id = &last_buffer[pos..];
+        *last_buffer = format!("{} id=\"{}\"{}", before_id, id, after_id);
+    }
+    
     context.push(&value);
 }
 
@@ -1282,10 +1298,15 @@ fn on_exit_heading_setext_underline_sequence(context: &mut CompileContext) {
     let head = context.bytes[position.start.index];
     let rank = if head == b'-' { "2" } else { "1" };
 
+    // Generate ID from the heading text using slugify
+    let id = slugify(&text);
+
     context.line_ending_if_needed();
     context.push("<h1 class=\"uk-h");
     context.push(rank);
-    context.push(" mt-8 mb-4\">");
+    context.push(" mt-8 mb-4\" id=\"");
+    context.push(&id);
+    context.push("\">");
     context.push(&text);
     context.push("</h1>");
 
