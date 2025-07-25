@@ -217,9 +217,11 @@
                     </div>
                     <div class="uk-card-body">
                         <ul class="uk-nav uk-nav-default text-sm">
-                            <li><a href="#overview" class="text-muted-foreground hover:text-foreground">Overview</a></li>
-                            <li><a href="#getting-started" class="text-muted-foreground hover:text-foreground">Getting Started</a></li>
-                            <li><a href="#examples" class="text-muted-foreground hover:text-foreground">Examples</a></li>
+                          {% for heading in current_page.headings %}
+                            {% if heading.level == 2 %}
+                              <li><a href="#{{ heading.text }}" class="text-muted-foreground hover:text-foreground">{{ heading.text }}</a></li>
+                            {% endif %}
+                          {% endfor %}
                         </ul>
                     </div>
                 </div>

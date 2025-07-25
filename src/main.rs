@@ -14,6 +14,7 @@ use askama::Template;
 
 use config::parse_config;
 use error::FrankmarkResult;
+use markdown::mdast::Node;
 
 use crate::config::{Book, Config};
 
@@ -147,6 +148,13 @@ struct Page {
     display_name: String,
     content: String,
     folder_name: String, // Direct reference to folder name
+    headings: Vec<Heading>,
+}
+
+#[derive(Debug)]
+struct Heading {
+    text: String,
+    level: u8,
 }
 
 impl Page {
@@ -155,6 +163,7 @@ impl Page {
         display_name: String,
         content: String,
         folder_name: String,
+        headings: Vec<Heading>,
     ) -> Self {
         // Use deterministic ID based on content hash for better performance
         let id = utils::generate_deterministic_id(&full_name);
@@ -164,6 +173,7 @@ impl Page {
             display_name,
             content,
             folder_name,
+            headings,
         }
     }
 
@@ -239,6 +249,12 @@ fn parse_directory(config: &Config, config_folder_path: &str) -> FrankmarkResult
 
         // Process all markdown content in batch
         for (page_name, content) in page_contents {
+
+            let mdast : Node = markdown::to_mdast(&content, &markdown::ParseOptions::gfm()).unwrap();
+
+            let headings = read_headings(&mdast);
+            println!("Headings for {}: {:?}", page_name, headings);
+            
             // Convert markdown to FrankenUi HTML
             let html_content =
                 match markdown::to_html_frankenui_with_options(&content, &markdown::Options::gfm())
@@ -258,6 +274,7 @@ fn parse_directory(config: &Config, config_folder_path: &str) -> FrankmarkResult
                 page_name,
                 html_content,
                 folder_name.clone(),
+                headings,
             );
             folder.add_page(page);
         }
@@ -271,6 +288,31 @@ fn parse_directory(config: &Config, config_folder_path: &str) -> FrankmarkResult
 
     Ok(folders)
 }
+
+fn read_headings(mdast: &Node) -> Vec<Heading> {
+    let mut headings = Vec::new();
+    visit(&mdast, |node| {
+        if let Node::Heading(heading) = node {
+            match heading.children.first() {
+                Some(text) => {
+                    if let Node::Text(text) = text {
+                        headings.push(Heading {
+                            text: text.value.clone(),
+                            level: heading.depth,
+                        });
+                    } else {
+                        eprintln!("Warning: Heading has no text");
+                    }
+                },
+                None => {
+                    eprintln!("Warning: Heading has no children text");
+                },
+            }
+        }
+    });
+    headings
+}
+
 
 // Optimized site generation with better file handling
 fn generate_site(folder_path: &str) -> FrankmarkResult<()> {
@@ -359,4 +401,32 @@ fn main() {
         eprintln!("Error: {}", e);
         std::process::exit(1);
     }
+}
+
+
+/// Visit.
+fn visit<Visitor>(node: &Node, visitor: Visitor)
+where
+    Visitor: FnMut(&Node),
+{
+    visit_impl(node, visitor);
+}
+
+/// Internal implementation to visit.
+fn visit_impl<Visitor>(node: &Node, mut visitor: Visitor) -> Visitor
+where
+    Visitor: FnMut(&Node),
+{
+    visitor(node);
+
+    if let Some(children) = node.children() {
+        let mut index = 0;
+        while index < children.len() {
+            let child = &children[index];
+            visitor = visit_impl(child, visitor);
+            index += 1;
+        }
+    }
+
+    visitor
 }
