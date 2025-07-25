@@ -61,7 +61,7 @@
                         <a class="uk-form-icon uk-form-icon-flip" href="#">
                           <uk-icon icon="search"></uk-icon>
                         </a>
-                        <input class="uk-input" type="text" aria-label="Clickable icon" placeholder="Search" />
+                        <input data-uk-toggle="target: #programmatic_navigation" class="uk-input" type="text" aria-label="Clickable icon" placeholder="Search" />
                     </div>
 
                     <div class="flex gap-2">
@@ -230,4 +230,31 @@
 
     </div>
 </body>
+
+<uk-command id="cmd-search" toggle="programmatic_navigation">
+  <select hidden>
+    {% for folder in folders %}
+    <optgroup label="{{ folder.name }}">
+      {% for page in folder.pages %}
+      <option data-icon="file-text" value="{{ get_page_url(page) }}">{{ page.display_name }}</option>
+      {% endfor %}
+    </optgroup>
+    {% endfor %}
+  </select>
+</uk-command>
+
+<script>
+  const el = document.getElementById("cmd-search");
+
+  el?.addEventListener("uk-command:click", (e) => {
+    let value = e.detail.value.value;
+    console.log(value);
+
+    // Navigate to the selected page
+    if (value) {
+      location.href = value;
+    }
+  });
+</script>
+
 </html>
