@@ -3,9 +3,9 @@ mod error;
 mod utils;
 
 use std::{
+    env,
     fs::{self, File},
     io::Write,
-    env,
 };
 
 use askama::Template; // bring trait in scope
@@ -225,7 +225,7 @@ fn parse_directory(config: &Config, config_folder_path: &str) -> FrankmarkResult
 fn generate_site(folder_path: &str) -> FrankmarkResult<()> {
     // Construct the config file path
     let config_path = format!("{}/frankmark.toml", folder_path);
-    
+
     // Parse the configuration file
     let config = parse_config(&config_path)?;
     println!("✓ Configuration loaded successfully");
@@ -289,13 +289,13 @@ fn run(folder_path: &str) -> FrankmarkResult<()> {
 
 fn main() {
     let args: Vec<String> = env::args().collect();
-    
+
     let folder_path = if args.len() > 1 {
         &args[1]
     } else {
         "docs/example" // default fallback
     };
-    
+
     if let Err(e) = run(folder_path) {
         eprintln!("Error: {}", e);
         std::process::exit(1);
