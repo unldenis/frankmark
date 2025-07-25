@@ -52,12 +52,21 @@
             <div class="flex h-14 items-center justify-between gap-8 px-4 sm:px-6">
                 
                 <div class="flex items-center gap-2">
-                    <a href="{{ get_first_page_url() }}" class="text-lg font-semibold hover:text-primary">
-                        {{ book.title }}
+                    <a href="{{ get_first_page_url() }}" class="text-lg font-semibold hover:text-primary truncate max-w-[200px] lg:max-w-none">
+                        <span class="lg:hidden">{{ book.get_title_header() }}</span>
+                        <span class="hidden lg:inline">{{ book.title }}</span>
                     </a>         
                 </div>
                 <div class="flex items-center gap-2">
-                    <div class="uk-inline">
+                    <!-- Search button for mobile -->
+                    <div class="lg:hidden">
+                        <a class="uk-btn uk-btn-secondary uk-btn-sm" href="#" data-uk-toggle="target: #programmatic_navigation">
+                            <uk-icon icon="search"></uk-icon>
+                        </a>
+                    </div>
+                    
+                    <!-- Search input for desktop -->
+                    <div class="uk-inline hidden lg:block">
                         <a class="uk-form-icon uk-form-icon-flip" href="#">
                           <uk-icon icon="search"></uk-icon>
                         </a>
@@ -66,13 +75,13 @@
 
                     <div class="flex gap-2">
                         {% if book.github_url.is_some() %}
-                          <a class="uk-btn uk-btn-secondary uk-btn-sm sm:inline-flex" href="{{ book.github_url.clone().unwrap() }}">
+                          <a class="uk-btn uk-btn-secondary uk-btn-sm" href="{{ book.github_url.clone().unwrap() }}">
                               <uk-icon icon="github"></uk-icon>
-                              <span>Star on Github</span>
+                              <span class="hidden sm:inline">Star on Github</span>
                           </a>
                         {% endif %}
 
-                        <a class="uk-btn uk-btn-secondary uk-btn-sm sm:inline-flex" href="#theme-switcher-modal" data-uk-toggle>
+                        <a class="uk-btn uk-btn-secondary uk-btn-sm" href="#theme-switcher-modal" data-uk-toggle>
                             <uk-icon icon="palette"></uk-icon>
                         </a>
                         <div class="uk-modal" id="theme-switcher-modal" data-uk-modal>
@@ -187,16 +196,16 @@
                     {% if previous_page.is_some() %}
                     <li class="mr-auto">
                       <a href="{{ get_page_url(previous_page.unwrap()) }}">
-                        <span class="mr-2" data-uk-pgn-previous></span>
-                        {{ get_page_display_name(previous_page.unwrap()) }}
+                        <span class="lg:mr-2" data-uk-pgn-previous></span>
+                        <span class="hidden sm:inline">{{ get_page_display_name(previous_page.unwrap()) }}</span>
                       </a>
                     </li>
                     {% endif %}
                     {% if next_page.is_some() %}
                     <li class="ml-auto">
                       <a href="{{ get_page_url(next_page.unwrap()) }}">
-                        {{ get_page_display_name(next_page.unwrap()) }}
-                        <span class="ml-2" data-uk-pgn-next></span></a>
+                        <span class="hidden sm:inline">{{ get_page_display_name(next_page.unwrap()) }}</span>
+                        <span class="lg:ml-2" data-uk-pgn-next></span></a>
                     </li>
                     {% endif %}
                   </ul>
