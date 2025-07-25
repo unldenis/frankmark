@@ -320,7 +320,7 @@ fn main() {
     let folder_path = if args.len() > 1 {
         &args[1]
     } else {
-        "docs/example" // default fallback
+        "demo" // default fallback
     };
 
     if let Err(e) = run(folder_path) {
