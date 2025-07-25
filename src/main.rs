@@ -5,6 +5,7 @@ mod utils;
 use std::{
     fs::{self, File},
     io::Write,
+    env,
 };
 
 use askama::Template; // bring trait in scope
@@ -221,29 +222,36 @@ fn parse_directory(config: &Config, config_folder_path: &str) -> FrankmarkResult
     Ok(folders)
 }
 
-fn generate_site() -> FrankmarkResult<()> {
+fn generate_site(folder_path: &str) -> FrankmarkResult<()> {
+    // Construct the config file path
+    let config_path = format!("{}/frankmark.toml", folder_path);
+    
     // Parse the configuration file
-    let config = parse_config("example/frankmark.toml")?;
+    let config = parse_config(&config_path)?;
     println!("✓ Configuration loaded successfully");
 
     // Access the parsed data
     println!("GitHub URL: {:?}", config.package.github_url);
     println!("Directories: {:?}", config.directories);
 
-    // try to parse the 'example' directory
-    let folders = parse_directory(&config, "example")?;
+    // Use the provided folder path as the source directory
+    let source_dir = folder_path;
+
+    // try to parse the source directory
+    let folders = parse_directory(&config, source_dir)?;
     println!("✓ Found {} folders to process", folders.len());
 
-    let output_path = "output";
+    // Build output in the same directory as the config file
+    let output_path = format!("{}/output", folder_path);
 
     // create the folder if it doesn't exist
-    fs::create_dir_all(output_path)?;
+    fs::create_dir_all(&output_path)?;
 
     // delete contents of the folder
-    if fs::metadata(output_path).is_ok() {
-        fs::remove_dir_all(output_path)?;
+    if fs::metadata(&output_path).is_ok() {
+        fs::remove_dir_all(&output_path)?;
     }
-    fs::create_dir_all(output_path)?;
+    fs::create_dir_all(&output_path)?;
 
     let mut total_pages = 0;
     for folder in folders.iter() {
@@ -275,12 +283,20 @@ fn generate_site() -> FrankmarkResult<()> {
 }
 
 // Add a wrapper to handle errors gracefully
-fn run() -> FrankmarkResult<()> {
-    generate_site()
+fn run(folder_path: &str) -> FrankmarkResult<()> {
+    generate_site(folder_path)
 }
 
 fn main() {
-    if let Err(e) = run() {
+    let args: Vec<String> = env::args().collect();
+    
+    let folder_path = if args.len() > 1 {
+        &args[1]
+    } else {
+        "docs/example" // default fallback
+    };
+    
+    if let Err(e) = run(folder_path) {
         eprintln!("Error: {}", e);
         std::process::exit(1);
     }
