@@ -452,14 +452,14 @@ fn on_enter_buffer(context: &mut CompileContext) {
 fn on_enter_block_quote(context: &mut CompileContext) {
     context.tight_stack.push(false);
     context.line_ending_if_needed();
-    context.push("<blockquote class=\"uk-blockquote\">");
+    context.push("<blockquote class=\"uk-blockquote mt-4\">");
 }
 
 /// Handle [`Enter`][Kind::Enter]:[`CodeIndented`][Name::CodeIndented].
 fn on_enter_code_indented(context: &mut CompileContext) {
     context.raw_flow_seen_data = Some(false);
     context.line_ending_if_needed();
-    context.push("<pre><code>");
+    context.push("<pre class=\"mt-4\"><code>");
 }
 
 /// Handle [`Enter`][Kind::Enter]:{[`CodeFenced`][Name::CodeFenced],[`MathFlow`][Name::MathFlow]}.
@@ -467,7 +467,7 @@ fn on_enter_raw_flow(context: &mut CompileContext) {
     context.raw_flow_seen_data = Some(false);
     context.line_ending_if_needed();
     // Note that no `>` is used, which is added later (due to info)
-    context.push("<pre><code");
+    context.push("<pre class=\"mt-4\"><code");
     context.raw_flow_fences_count = Some(0);
 
     if context.events[context.index].name == Name::MathFlow {
@@ -548,7 +548,8 @@ fn on_enter_gfm_table(context: &mut CompileContext) {
     let align = gfm_table_align(context.events, context.index);
     context.gfm_table_align = Some(align);
     context.line_ending_if_needed();
-    context.push("<div class=\"uk-overflow-auto\"><table class=\"uk-table uk-table-divider\">");
+    context
+        .push("<div class=\"uk-overflow-auto mt-4\"><table class=\"uk-table uk-table-divider\">");
 }
 
 /// Handle [`Enter`][Kind::Enter]:[`GfmTableBody`][Name::GfmTableBody].
@@ -656,9 +657,9 @@ fn on_enter_list(context: &mut CompileContext) {
 
     // Note: no `>`.
     context.push(if context.events[context.index].name == Name::ListOrdered {
-        "<ul class=\"uk-list uk-list-decimal\""
+        "<ul class=\"uk-list uk-list-decimal mt-4\""
     } else {
-        "<ul class=\"uk-list uk-list-disc\""
+        "<ul class=\"uk-list uk-list-disc mt-4\""
     });
     context.list_expect_first_marker = Some(true);
 }
@@ -1560,7 +1561,7 @@ fn on_exit_strong(context: &mut CompileContext) {
 /// Handle [`Exit`][Kind::Exit]:[`ThematicBreak`][Name::ThematicBreak].
 fn on_exit_thematic_break(context: &mut CompileContext) {
     context.line_ending_if_needed();
-    context.push("<hr class=\"uk-hr\"/>");
+    context.push("<hr class=\"uk-divider-icon mt-4\"/>");
 }
 
 /// Generate a footnote section.
