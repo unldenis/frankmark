@@ -79,6 +79,21 @@ impl<'a> MainTemplate<'a> {
 
         "".to_string()
     }
+
+    pub fn has_previous_and_next_pages(&self) -> bool {
+        self.previous_page.is_some() && self.next_page.is_some()
+    }
+
+    pub fn get_page_display_name(&self, page: &Page) -> String {
+        let page_folder = self.get_folder_by_page(page);
+        let current_folder = self.get_folder_by_page(self.current_page);
+        
+        if page_folder.name == current_folder.name {
+            page.display_name.clone()
+        } else {
+            format!("{}/{}", page_folder.name, page.display_name)
+        }
+    }
 }
 
 #[derive(Debug)]

@@ -172,10 +172,11 @@
                   {{ current_page.content | safe }}
                 </div>
 
-                <!-- If has previous page -->
-                {% if previous_page.is_some() %}
-                <div class="mt-6">
-                    <div class="uk-card max-w-lg mr-auto" href="{{ previous_page.unwrap().display_name }}">
+                <!-- Navigation cards container -->
+                <div class="mt-6 {% if has_previous_and_next_pages() %}flex gap-4{% endif %}">
+                    <!-- If has previous page -->
+                    {% if previous_page.is_some() %}
+                    <div class="uk-card {% if next_page.is_some() %}flex-1{% else %}max-w-lg{% endif %}" href="{{ previous_page.unwrap().display_name }}">
                         <div class="uk-card-body flex justify-between">
                             <a class="uk-btn uk-btn-default uk-btn-icon" href="{{ get_page_url(previous_page.unwrap()) }}">
                                 <uk-icon icon="arrow-left"></uk-icon>
@@ -186,25 +187,23 @@
                                   Previous
                               </p>
                               <p>
-                                  {{ previous_page.unwrap().display_name }}
+                                  {{ get_page_display_name(previous_page.unwrap()) }}
                               </p>
                           </div>
                         </div>
                     </div>
-                </div>
-                {% endif %}
+                    {% endif %}
 
-                <!-- If has next page -->
-                {% if next_page.is_some() %}
-                <div class="mt-6">
-                    <div class="uk-card max-w-lg ml-auto" href="{{ next_page.unwrap().display_name }}">
+                    <!-- If has next page -->
+                    {% if next_page.is_some() %}
+                    <div class="uk-card {% if previous_page.is_some() %}flex-1{% else %}max-w-lg ml-auto{% endif %}" href="{{ next_page.unwrap().display_name }}">
                         <div class="uk-card-body flex justify-between">
                             <div class="">
                                 <p class="mt-2 text-muted-foreground">
                                     Next
                                 </p>
                                 <p>
-                                    {{ next_page.unwrap().display_name }}
+                                    {{ get_page_display_name(next_page.unwrap()) }}
                                 </p>
                             </div>
 
@@ -213,8 +212,8 @@
                             </a>           
                         </div>
                     </div>
+                    {% endif %}
                 </div>
-                {% endif %}
             </div>
 
             <!-- Add space -->
