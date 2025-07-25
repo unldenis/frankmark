@@ -27,6 +27,7 @@ struct MainTemplate<'a> {
 
     previous_page: Option<&'a Page>,
     next_page: Option<&'a Page>,
+    is_root: bool,
 }
 
 impl<'a> MainTemplate<'a> {
@@ -36,6 +37,7 @@ impl<'a> MainTemplate<'a> {
         current_page: &'a Page,
         previous_page: Option<&'a Page>,
         next_page: Option<&'a Page>,
+        is_root: bool,
     ) -> Self {
         Self {
             title: "Test Page".to_string(),
@@ -48,6 +50,7 @@ impl<'a> MainTemplate<'a> {
             current_page: current_page,
             previous_page: previous_page,
             next_page: next_page,
+            is_root: is_root,
         }
     }
 
@@ -60,7 +63,11 @@ impl<'a> MainTemplate<'a> {
 
     pub fn get_page_url(&self, page: &Page) -> String {
         let folder = self.get_folder_by_page(page);
-        format!("../{}/{}.html", folder.name, page.display_name)
+        if self.is_root {
+            format!("{}/{}.html", folder.name, page.display_name)
+        } else {
+            format!("../{}/{}.html", folder.name, page.display_name)
+        }
     }
 
     pub fn is_current_page_folder(&self, folder: &Folder) -> String {
@@ -254,6 +261,7 @@ fn generate_site(folder_path: &str) -> FrankmarkResult<()> {
     fs::create_dir_all(&output_path)?;
 
     let mut total_pages = 0;
+    let mut first_page: Option<&Page> = None;
     for folder in folders.iter() {
         // create the folder if it doesn't exist
         fs::create_dir_all(format!("{}/{}", output_path, folder.name))?;
@@ -265,6 +273,7 @@ fn generate_site(folder_path: &str) -> FrankmarkResult<()> {
                 page,
                 get_global_previous_page(&folders, page),
                 get_global_next_page(&folders, page),
+                false, // not root for subfolder pages
             ); // instantiate your struct
             let rendered = page_template.render()?; // then render it.
 
@@ -275,7 +284,25 @@ fn generate_site(folder_path: &str) -> FrankmarkResult<()> {
 
             println!("✓ Generated {}", file_name);
             total_pages += 1;
+
+            if first_page.is_none() {
+                first_page = Some(page);
+            }
         }
+    }
+    if let Some(first_page) = first_page {
+        let page_template = MainTemplate::new(
+            &config,
+            &folders,
+            first_page,
+            None,
+            get_global_next_page(&folders, first_page),
+            true, // is root for index.html
+        );
+        let rendered = page_template.render()?;
+        let mut file = File::create(format!("{}/index.html", output_path))?;
+        file.write_all(rendered.as_bytes())?;
+        println!("✓ Generated index.html");
     }
 
     println!("✓ Successfully generated {} pages", total_pages);
