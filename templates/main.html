@@ -9,7 +9,8 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/default.min.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js"></script>
   <!-- and it's easy to individually load additional languages -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/languages/go.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/languages/rust.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/languages/toml.min.js"></script>
   <script>hljs.highlightAll();</script>
 
   <!-- FrankenUI CSS -->
@@ -51,7 +52,9 @@
             <div class="flex h-14 items-center justify-between gap-8 px-4 sm:px-6">
                 
                 <div class="flex items-center gap-2">
-                    <!-- <p>Hello</p> -->
+                    <a href="{% if is_root %}index.html{% else %}../index.html{% endif %}" class="text-lg font-semibold hover:text-primary">
+                        {{ book.title }}
+                    </a>         
                 </div>
                 <div class="flex items-center gap-2">
                     <div class="uk-inline">
@@ -142,81 +145,62 @@
     <!-- Main -->
     <div class="grid grid-cols-12 pt-14">
         
-        <!-- Sidebar -->
-        <aside class="col-span-2">
-            
-
+        <!-- Left Sidebar -->
+        <aside class="col-span-2 lg:col-span-2 hidden lg:block">
+          <div class="sticky top-20">
             <ul class="uk-nav uk-nav-default mx-auto mt-4 ml-6 mr-6" data-uk-nav="collapsible: false">
-                <div class="uk-nav-header">Documentation</div>
-                {% for folder in folders %}
-                <li class="uk-parent {{ is_current_page_folder(folder) }}">
-                    <a href="#">{{ folder.name }} <span data-uk-nav-parent-icon></span></a>
-                    <ul class="uk-nav-sub">
-                        {% for page in folder.pages %}
-                        <li class="{% if page.is_active(current_page) %}uk-active{% endif %}"><a href="{{ get_page_url(page) }}">{{ page.display_name }}</a></li>
-                        {% endfor %}
-                    </ul>   
-                </li>
-                {% endfor %}
-            </ul>
-
+              <div class="uk-nav-header">Documentation</div>
+              {% for folder in folders %}
+              <li class="uk-parent {{ is_current_page_folder(folder) }}">
+                  <a href="#">{{ folder.name }} <span data-uk-nav-parent-icon></span></a>
+                  <ul class="uk-nav-sub">
+                      {% for page in folder.pages %}
+                      <li class="{% if page.is_active(current_page) %}uk-active{% endif %}"><a href="{{ get_page_url(page) }}">{{ page.display_name }}</a></li>
+                      {% endfor %}
+                  </ul>   
+              </li>
+              {% endfor %}
+           </ul>
+          </div>
         </aside>
 
-
-        <!-- Empty Space -->
-        <div class="col-span-1">
-            <!-- This space is intentionally left empty -->
-        </div>
-
         <!-- Main Content -->
-        <div class="col-span-6">
-            <div class="pt-6">
-                <div class="content">
+        <div class="col-span-12 lg:col-span-7">
+            <div class="pt-6 px-6">
+                <!-- Breadcrumbs -->
+                <nav class="text-sm text-muted-foreground mb-4">
+                    <a href="{% if is_root %}index.html{% else %}../index.html{% endif %}" class="hover:text-foreground">Home</a>
+                    <span class="mx-2">/</span>
+                    <a href="#" class="hover:text-foreground">{{ current_page.folder_name }}</a>
+                    <span class="mx-2">/</span>
+                    <span class="text-foreground">{{ current_page.display_name }}</span>
+                </nav>
+
+                <!-- Content -->
+                <div class="content prose prose-sm max-w-none">
                   {{ current_page.content | safe }}
                 </div>
 
                 <!-- Navigation cards container -->
-                <div class="mt-6 {% if has_previous_and_next_pages() %}flex gap-4{% endif %}">
-                    <!-- If has previous page -->
+                <nav class="mt-8">
+                  <ul class="uk-pgn uk-pgn-default uk-pgn-lg">
                     {% if previous_page.is_some() %}
-                    <div class="uk-card {% if next_page.is_some() %}flex-1{% else %}max-w-lg{% endif %}" href="{{ previous_page.unwrap().display_name }}">
-                        <div class="uk-card-body flex justify-between">
-                            <a class="uk-btn uk-btn-default uk-btn-icon" href="{{ get_page_url(previous_page.unwrap()) }}">
-                                <uk-icon icon="arrow-left"></uk-icon>
-                            </a>
-
-                            <div class="">
-                              <p class="mt-2 text-muted-foreground">
-                                  Previous
-                              </p>
-                              <p>
-                                  {{ get_page_display_name(previous_page.unwrap()) }}
-                              </p>
-                          </div>
-                        </div>
-                    </div>
+                    <li class="mr-auto">
+                      <a href="{{ get_page_url(previous_page.unwrap()) }}">
+                        <span class="mr-2" data-uk-pgn-previous></span>
+                        {{ get_page_display_name(previous_page.unwrap()) }}
+                      </a>
+                    </li>
                     {% endif %}
-
-                    <!-- If has next page -->
                     {% if next_page.is_some() %}
-                    <div class="uk-card {% if previous_page.is_some() %}flex-1{% else %}max-w-lg ml-auto{% endif %}" href="{{ next_page.unwrap().display_name }}">
-                        <div class="uk-card-body flex justify-between">
-                            <div class="">
-                                <p class="mt-2 text-muted-foreground">
-                                    Next
-                                </p>
-                                <p>
-                                    {{ get_page_display_name(next_page.unwrap()) }}
-                                </p>
-                            </div>
-
-                            <a class="uk-btn uk-btn-default uk-btn-icon" href="{{ get_page_url(next_page.unwrap()) }}">
-                                <uk-icon icon="arrow-right"></uk-icon>
-                            </a>           
-                        </div>
-                    </div>
+                    <li class="ml-auto">
+                      <a href="{{ get_page_url(next_page.unwrap()) }}">
+                        {{ get_page_display_name(next_page.unwrap()) }}
+                        <span class="ml-2" data-uk-pgn-next></span></a>
+                    </li>
                     {% endif %}
-                </div>
+                  </ul>
+                </nav>
             </div>
 
             <!-- Add space -->
@@ -224,10 +208,23 @@
               
         </div>
 
-        <!-- Empty Space -->
-        <div class="col-span-3">
-            <!-- This space is intentionally left empty -->
-        </div>
+        <!-- Right Sidebar (Table of Contents) -->
+        <aside class="col-span-2 lg:col-span-3 hidden lg:block">
+            <div class="sticky top-20 pt-6 pr-6">
+                <div class="uk-card">
+                    <div class="uk-card-header">
+                        <h3 class="uk-card-title text-sm font-semibold">On this page</h3>
+                    </div>
+                    <div class="uk-card-body">
+                        <ul class="uk-nav uk-nav-default text-sm">
+                            <li><a href="#overview" class="text-muted-foreground hover:text-foreground">Overview</a></li>
+                            <li><a href="#getting-started" class="text-muted-foreground hover:text-foreground">Getting Started</a></li>
+                            <li><a href="#examples" class="text-muted-foreground hover:text-foreground">Examples</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </aside>
 
     </div>
 </body>
