@@ -575,9 +575,9 @@ fn on_enter_gfm_table_cell(context: &mut CompileContext) {
         }
 
         match value {
-            AlignKind::Left => context.push(" align=\"left\""),
-            AlignKind::Right => context.push(" align=\"right\""),
-            AlignKind::Center => context.push(" align=\"center\""),
+            AlignKind::Left => context.push(" class=\"uk-text-left\""),
+            AlignKind::Right => context.push(" class=\"uk-text-right\""),
+            AlignKind::Center => context.push(" class=\"uk-text-center\""),
             AlignKind::None => {}
         }
 
