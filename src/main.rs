@@ -46,17 +46,17 @@ impl<'a> MainTemplate<'a> {
         }
     }
 
-    pub fn get_page_url(&self, page: &Page) -> String {
-        format!("../{}/{}.html", page.folder_name, page.display_name)
+    pub fn get_relative_path_url(&self, page: &Page) -> String {
+        // Calculate relative path from current page's directory to target page
+        let current_dir = self.current_page.output_path.parent().unwrap();
+        let relative_path = pathdiff::diff_paths(&page.output_path, current_dir).unwrap();
+        relative_path.to_string_lossy().into_owned()
     }
 
     pub fn get_first_page_url(&self) -> String {
         if let Some(first_folder) = self.folders.first() {
             if let Some(first_page) = first_folder.pages.first() {
-                return format!(
-                    "../{}/{}.html",
-                    first_page.folder_name, first_page.display_name
-                );
+                return self.get_relative_path_url(first_page);
             }
         }
         String::new()
@@ -148,6 +148,7 @@ impl<'a> PageNavigator<'a> {
 
 #[derive(Debug)]
 struct Page {
+    output_path: PathBuf, // Path to the rendered HTML file
     id: String,
     #[allow(dead_code)]
     full_name: String,
@@ -166,6 +167,7 @@ struct Heading {
 
 impl Page {
     pub fn new(
+        output_path: PathBuf,
         full_name: String,
         display_name: String,
         content: String,
@@ -175,6 +177,7 @@ impl Page {
         // Use deterministic ID based on content hash for better performance
         let id = utils::generate_deterministic_id(&full_name);
         Self {
+            output_path,
             id,
             full_name,
             display_name,
@@ -276,6 +279,7 @@ fn parse_directory(config: &Config, config_folder_path: &str) -> FrankmarkResult
                 };
 
             let page = Page::new(
+                PathBuf::new(), // Will be set later in generate_site
                 page_name.clone(),
                 page_name,
                 html_content,
@@ -327,7 +331,7 @@ fn generate_site(folder_path: &str) -> FrankmarkResult<()> {
     println!("✓ Configuration loaded successfully");
 
     let source_dir = folder_path;
-    let folders = parse_directory(&config, source_dir)?;
+    let mut folders = parse_directory(&config, source_dir)?;
     println!("✓ Found {} folders to process", folders.len());
 
     let output_path = Path::new(folder_path).join("output");
@@ -337,6 +341,15 @@ fn generate_site(folder_path: &str) -> FrankmarkResult<()> {
         fs::remove_dir_all(&output_path)?;
     }
     fs::create_dir_all(&output_path)?;
+
+    // Set output paths for all pages
+    for folder in &mut folders {
+        for page in &mut folder.pages {
+            page.output_path = output_path
+                .join(&folder.name)
+                .join(format!("{}.html", page.display_name));
+        }
+    }
 
     // Pre-compute navigation for better performance
     let navigator = PageNavigator::new(&folders);

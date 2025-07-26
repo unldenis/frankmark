@@ -164,7 +164,7 @@
                   <a href="#">{{ folder.name }} <span data-uk-nav-parent-icon></span></a>
                   <ul class="uk-nav-sub">
                       {% for page in folder.pages %}
-                      <li class="{% if page.is_active(current_page) %}uk-active{% endif %}"><a href="{{ get_page_url(page) }}">{{ page.display_name }}</a></li>
+                      <li class="{% if page.is_active(current_page) %}uk-active{% endif %}"><a href="{{ get_relative_path_url(page) }}">{{ page.display_name }}</a></li>
                       {% endfor %}
                   </ul>   
               </li>
@@ -195,7 +195,7 @@
                   <ul class="uk-pgn uk-pgn-default uk-pgn-lg">
                     {% if previous_page.is_some() %}
                     <li class="mr-auto">
-                      <a href="{{ get_page_url(previous_page.unwrap()) }}">
+                      <a href="{{ get_relative_path_url(previous_page.unwrap()) }}">
                         <span class="lg:mr-2" data-uk-pgn-previous></span>
                         <span class="hidden sm:inline">{{ get_page_display_name(previous_page.unwrap()) }}</span>
                       </a>
@@ -203,7 +203,7 @@
                     {% endif %}
                     {% if next_page.is_some() %}
                     <li class="ml-auto">
-                      <a href="{{ get_page_url(next_page.unwrap()) }}">
+                      <a href="{{ get_relative_path_url(next_page.unwrap()) }}">
                         <span class="hidden sm:inline">{{ get_page_display_name(next_page.unwrap()) }}</span>
                         <span class="lg:ml-2" data-uk-pgn-next></span></a>
                     </li>
@@ -245,7 +245,7 @@
     {% for folder in folders %}
     <optgroup label="{{ folder.name }}">
       {% for page in folder.pages %}
-      <option data-icon="file-text" value="{{ get_page_url(page) }}">{{ page.display_name }}</option>
+      <option data-icon="file-text" value="{{ get_relative_path_url(page) }}">{{ page.display_name }}</option>
       {% endfor %}
     </optgroup>
     {% endfor %}
