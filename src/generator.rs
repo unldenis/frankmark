@@ -14,11 +14,11 @@ use askama::Template;
 pub fn generate_site(folder_path: &str) -> FrankmarkResult<()> {
     let config_path = format!("{}/frankmark.toml", folder_path);
     let config = crate::config::parse_config(&config_path)?;
-    println!("✓ Configuration loaded successfully");
+    println!("Configuration loaded successfully");
 
     let source_dir = folder_path;
     let mut folders = parse_directory(&config, source_dir)?;
-    println!("✓ Found {} folders to process", folders.len());
+    println!("Found {} folders to process", folders.len());
 
     let output_path = Path::new(folder_path).join("output");
 
@@ -64,7 +64,7 @@ pub fn generate_site(folder_path: &str) -> FrankmarkResult<()> {
             let mut file = File::create(&file_path)?;
             file.write_all(rendered.as_bytes())?;
 
-            println!("✓ Generated {}", file_path.display());
+            println!("Generated {}", file_path.display());
             total_pages += 1;
 
             if first_page.is_none() {
@@ -73,6 +73,6 @@ pub fn generate_site(folder_path: &str) -> FrankmarkResult<()> {
         }
     }
 
-    println!("✓ Successfully generated {} pages", total_pages);
+    println!("Successfully generated {} pages", total_pages);
     Ok(())
 }

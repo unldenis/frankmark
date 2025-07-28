@@ -155,7 +155,7 @@
     <div class="grid grid-cols-12 pt-14">
         
         <!-- Left Sidebar -->
-        <aside class="col-span-2 lg:col-span-2 hidden lg:block">
+        <aside class="col-span-3 hidden lg:block">
           <div class="sticky top-20">
             <ul class="uk-nav uk-nav-default mx-auto mt-4 ml-6 mr-6" data-uk-nav="collapsible: false">
               <div class="uk-nav-header">Documentation</div>
@@ -174,7 +174,7 @@
         </aside>
 
         <!-- Main Content -->
-        <div class="col-span-12 lg:col-span-7">
+        <div class="col-span-12 lg:col-span-6">
             <div class="pt-6 px-6">
                 <!-- Breadcrumbs -->
                 <nav class="text-sm text-muted-foreground mb-4">
@@ -191,24 +191,19 @@
                 </div>
 
                 <!-- Navigation cards container -->
-                <nav class="mt-8">
-                  <ul class="uk-pgn uk-pgn-default uk-pgn-lg">
-                    {% if previous_page.is_some() %}
-                    <li class="mr-auto">
-                      <a href="{{ get_relative_path_url(previous_page.unwrap()) }}">
-                        <span class="lg:mr-2" data-uk-pgn-previous></span>
-                        <span class="hidden sm:inline">{{ get_page_display_name(previous_page.unwrap()) }}</span>
-                      </a>
-                    </li>
-                    {% endif %}
-                    {% if next_page.is_some() %}
-                    <li class="ml-auto">
-                      <a href="{{ get_relative_path_url(next_page.unwrap()) }}">
-                        <span class="hidden sm:inline">{{ get_page_display_name(next_page.unwrap()) }}</span>
-                        <span class="lg:ml-2" data-uk-pgn-next></span></a>
-                    </li>
-                    {% endif %}
-                  </ul>
+                <nav class="mt-8 flex flex-col sm:flex-row gap-2">
+                  {% if previous_page.is_some() %}
+                  <a href="{{ get_relative_path_url(previous_page.unwrap()) }}" class="uk-btn uk-btn-md uk-btn-default w-full sm:w-1/2">
+                    <span class="mr-2" data-uk-pgn-previous></span>
+                    <span class="">{{ get_page_display_name(previous_page.unwrap()) }}</span>
+                  </a>
+                  {% endif %}
+                  {% if next_page.is_some() %}
+                  <a href="{{ get_relative_path_url(next_page.unwrap()) }}" class="uk-btn uk-btn-md uk-btn-default w-full sm:w-1/2">
+                    <span class="">{{ get_page_display_name(next_page.unwrap()) }}</span>
+                    <span class="ml-2" data-uk-pgn-next></span>
+                  </a>
+                  {% endif %}
                 </nav>
             </div>
 
@@ -218,7 +213,7 @@
         </div>
 
         <!-- Right Sidebar (Table of Contents) -->
-        <aside class="col-span-2 lg:col-span-3 hidden lg:block">
+        <aside class="col-span-3 hidden lg:block">
             <div class="sticky top-20 pt-6 pr-6">
                 <div class="uk-card">
                     <div class="uk-card-header">
